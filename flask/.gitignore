@@ -1,0 +1,40 @@
+# Direktori virtual environment
+pyvenv.cfg
+Lib/
+Include/
+Scripts/
+
+
+.env
+# File cache Python
+__pycache__/
+*.py[cod]
+node_modules/
+package-lock.json
+package.json
+
+# File environment atau konfigurasi lokal
+proj_flask/
+
+# Log file
+*.log
+
+# File dependency
+*.egg-info/
+*.egg
+
+# File data sementara
+*.bak
+*.swp
+*.tmp
+
+# Folder hasil build atau distribusi
+dist/
+build/
+*.dist-info/
+
+# File terkait IDE/editor tertentu
+.vscode/
+.idea/
+
+.vercel

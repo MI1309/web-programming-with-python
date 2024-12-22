@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Endpoint</title>
+    <!-- Menambahkan link ke file CSS Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #343a40;
+        }
+
+        .btn {
+            font-size: 1.1rem;
+        }
+
+        #response {
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #495057;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            font-size: 1.1rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Test API Endpoint</h1>
+
+        <!-- Formulir untuk menambah TODO baru -->
+        <div class="input-group mb-3">
+            <input id="newTask" type="text" class="form-control" placeholder="Masukkan task baru"
+                aria-label="Task Baru">
+            <div class="input-group-append">
+                <button id="Post" class="btn btn-success">Tambah TODO</button>
+            </div>
+        </div>
+
+        <!-- Tombol Get dan Del dengan styling Bootstrap di bawah tombol Post -->
+        <div class="button-group">
+            <button id="Get" class="btn btn-primary">Get TODO</button>
+            <button id="Del" class="btn btn-danger">Hapus TODO</button>
+        </div>
+
+        <!-- Area untuk menampilkan respons API -->
+        <div id="response" class="alert alert-info" role="alert">
+            <!-- Respons API akan ditampilkan di sini -->
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk mengambil TODO
+        document.getElementById("Get").addEventListener("click", function () {
+            fetch('https://76ba-66-96-225-105.ngrok-free.app/todos') // URL sesuai dengan API endpoint Anda
+                .then(response => response.json())  // Mengonversi respons ke JSON
+                .then(data => {
+                    document.getElementById("response").innerHTML = JSON.stringify(data);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.getElementById("response").innerHTML = "Error fetching data";
+                });
+        });
+
+        // Fungsi untuk menghapus TODO
+        document.getElementById("Del").addEventListener("click", function () {
+            const todoId = prompt("Masukkan ID TODO yang akan dihapus:"); // Meminta ID dari user
+            if (todoId) {
+                fetch(`https://76ba-66-96-225-105.ngrok-free.app/todos/${todoId}`, {
+                    method: 'DELETE'  // Menggunakan metode DELETE untuk menghapus data
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            if (response.status === 204) {
+                                return { message: "TODO berhasil dihapus" };  // Mengembalikan pesan jika tidak ada konten
+                            }
+                            return response.json();  // Jika ada body, parsing JSON
+                        }
+                        throw new Error('Error deleting TODO');
+                    })
+                    .then(data => {
+                        document.getElementById("response").innerHTML = "TODO berhasil dihapus: " + (data.message || JSON.stringify(data));
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        document.getElementById("response").innerHTML = "Error deleting TODO";
+                    });
+            }
+        });
+
+        // Fungsi untuk menambah TODO baru
+        document.getElementById("Post").addEventListener("click", function () {
+            const task = document.getElementById("newTask").value; // Mengambil nilai dari input field
+            if (task) {
+                fetch('https://76ba-66-96-225-105.ngrok-free.app/todos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ task: task }) // Mengirim data task dalam format JSON
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("response").innerHTML = "TODO berhasil ditambahkan: " + JSON.stringify(data);
+                        document.getElementById("newTask").value = ''; // Mengosongkan input field setelah pengiriman
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        document.getElementById("response").innerHTML = "Error adding TODO";
+                    });
+            } else {
+                alert("Task tidak boleh kosong!");
+            }
+        });
+    </script>
+
+    <!-- Menambahkan script JS Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
